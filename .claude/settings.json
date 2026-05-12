@@ -31,7 +31,9 @@
       "Bash(printf:*)",
       "Bash(tmux has-session:*)",
       "Bash(tmux list-sessions)",
-      "Bash(tmux capture-pane:*)"
+      "Bash(tmux capture-pane:*)",
+      "Bash(ssh -i ~/.ssh/id_rsa opc@138.2.28.222:*)",
+      "Bash(scp -i ~/.ssh/id_rsa:*)"
     ],
     "deny": [
       "Bash(sudo:*)",
@@ -48,8 +50,6 @@
       "Bash(wget:*)",
       "Bash(nc:*)",
       "Bash(ncat:*)",
-      "Bash(ssh:*)",
-      "Bash(scp:*)",
       "Bash(cat:*)",
       "Bash(head:*)",
       "Bash(tail:*)",
