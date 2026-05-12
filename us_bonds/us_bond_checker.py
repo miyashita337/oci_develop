@@ -1,6 +1,7 @@
 import requests
 import json
-from datetime import datetime, timedelta
+import time
+from datetime import datetime, timedelta, timezone
 import os
 import logging
 
@@ -77,7 +78,7 @@ def load_previous_data():
 def save_bonds_data(data, cooldown=None, above_absolute_threshold=None):
     payload = {
         "data": data,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
     if cooldown is not None:
         payload["cooldown"] = cooldown
@@ -202,7 +203,7 @@ def check_us_bonds(absolute_threshold=None, volatility_threshold=None):
 
         notifications = []
         new_cooldown_state = dict(cooldown_state)
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = int(time.time())
 
         # 1) ボラ型判定（全銘柄）
         for bond_type, info in current_data.items():

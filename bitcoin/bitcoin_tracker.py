@@ -8,7 +8,7 @@ import requests
 import json
 import os
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import time
 
 
@@ -75,7 +75,7 @@ class BitcoinTracker:
                     f"{self.trading_config['vs_currency']}_24h_vol", 0
                 ),
                 "last_updated": bitcoin_data.get("last_updated_at", int(time.time())),
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
 
             logger.info(

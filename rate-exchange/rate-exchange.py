@@ -1,6 +1,7 @@
 import requests
 import json
-from datetime import datetime, timedelta
+import time
+from datetime import datetime, timedelta, timezone
 import os
 import logging
 
@@ -67,7 +68,7 @@ def load_previous_rate():
 
 # レート記録保存
 def save_rate(rate, last_notif_ts=None):
-    payload = {"rate": rate, "timestamp": datetime.utcnow().isoformat()}
+    payload = {"rate": rate, "timestamp": datetime.now(timezone.utc).isoformat()}
     if last_notif_ts is not None:
         payload["last_notif_ts"] = last_notif_ts
     with open(SAVE_FILE, "w") as f:
@@ -211,6 +212,12 @@ def check_usdjpy(threshold=None):
         if data:
             previous_rate = data["rate"]
             carry_last_notif_ts = data.get("last_notif_ts")
+            if not previous_rate:
+                logger.warning(
+                    f"前回レートが 0 または欠損: {previous_rate!r} - ベースライン再設定"
+                )
+                save_rate(current_rate, carry_last_notif_ts)
+                return
             rate_change = (current_rate - previous_rate) / previous_rate
 
             logger.info(
@@ -218,7 +225,7 @@ def check_usdjpy(threshold=None):
             )
 
             if abs(rate_change) >= threshold:
-                now_ts = int(datetime.utcnow().timestamp())
+                now_ts = int(time.time())
                 if (
                     carry_last_notif_ts
                     and (now_ts - carry_last_notif_ts) < cooldown_seconds
